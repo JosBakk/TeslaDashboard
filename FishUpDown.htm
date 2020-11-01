@@ -148,16 +148,30 @@ check();
 	
 function accelerate2(n) {
     myGamePiece.gravity = -0.2;
-	setTimeout(function(){ myGamePiece.gravity = 0.05; }, 100);
+	setTimeout(function(){ myGamePiece.gravity = 0.05; }, 50);
 //	sleep(1000); // check again in a second
 	//myGamePiece.gravity = 0.05;
 }
+
+function myFunction1() {
+  myGamePiece.gravity = -0.2;
+}
+
+function myFunction2() {
+  myGamePiece.gravity = 0.05;
+}
+
 </script>
 <br>
 
 <button onclick="accelerate2(-0.2)" style="height:200px;width:200px">ACCELERATE2</button>
 
+<button ontouchstart="myFunction1()" ontouchend="myFunction2()"style="height:200px;width:200px">ACCELERATE3</button>
+
 <p>Use the ACCELERATE button to stay in the air</p>
 <p>How long can you stay alive?</p>
+
+
+
 </body>
 </html>
