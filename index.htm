@@ -1,1 +1,36 @@
-HALLO
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>My First JavaScript</h1>
+<p>Here, a JavaScript changes the value of the src (source) attribute of an image.</p>
+
+<script>
+function light(sw) {
+  var pic;
+  if (sw == 0) {
+    pic = "pic_bulboff.gif"
+  } else {
+    pic = "pic_bulbon.gif"
+  }
+  document.getElementById('myImage').src = pic;
+}
+</script>
+
+<img id="myImage" src="pic_bulbon.gif" width="100" height="180">
+
+<p>
+<button type="button" onclick="light(1)">Light On</button>
+<button type="button" onclick="light(0)">Light Off</button>
+</p>
+
+<p>
+<button type="button" onclick="light(1)" style="height:200px;width:200px">Light On</button>
+<button type="button" onclick="light(0)" style="height:200px;width:200px">Light Off</button>
+</p>
+
+<h1><a href="https://www.vegvesen.no/public/webkamera/kamera?id=281030">Haglebu</a></h1>
+<h1><a href="FishUpDown.htm">Fish Up Down</a></h1>
+
+</body>
+</html>
