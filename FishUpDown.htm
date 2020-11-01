@@ -128,9 +128,35 @@ function everyinterval(n) {
 function accelerate(n) {
     myGamePiece.gravity = n;
 }
+
+function sleep(miliseconds) {
+        var currentTime = new Date().getTime();
+        while (currentTime + miliseconds >= new Date().getTime()) {
+    }
+}
+	
+var check = function(){
+    if(condition){
+        // run when condition is met
+    }
+    else {
+        setTimeout(check, 1000); // check again in a second
+    }
+}
+
+check();
+	
+function accelerate2(n) {
+    myGamePiece.gravity = -0.2;
+	setTimeout(function(){ myGamePiece.gravity = 0.05; }, 100);
+//	sleep(1000); // check again in a second
+	//myGamePiece.gravity = 0.05;
+}
 </script>
 <br>
-<button onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)" style="height:200px;width:200px">ACCELERATE</button>
+
+<button onclick="accelerate2(-0.2)" style="height:200px;width:200px">ACCELERATE2</button>
+
 <p>Use the ACCELERATE button to stay in the air</p>
 <p>How long can you stay alive?</p>
 </body>
