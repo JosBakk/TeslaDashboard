@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Click the button to get your coordinates.</p>
+
+<button onclick="startGetLocation()">Try It</button>
+
+<p id="demo"></p>
+<p id="counter"></p>
+
+<script>
+var x = document.getElementById("demo");
+var y = document.getElementById("counter");
+
+function sleep(delay) {
+        var start = new Date().getTime();
+        while (new Date().getTime() < start + delay);
+      }
+
+function startGetLocation() {
+  var i;
+  for (i = 0; i < 10; i++) {
+  //getLocation();
+  y.innerHTML = "Counter: " + i +"<br>";
+  sleep(1000);
+
+  }
+}
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else { 
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function showPosition(position) {
+  x.innerHTML = "Latitude: " + position.coords.latitude + 
+  "<br>Longitude: " + position.coords.longitude;
+}
+</script>
+
+</body>
+</html>
