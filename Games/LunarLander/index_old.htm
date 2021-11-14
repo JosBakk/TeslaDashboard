@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body onload="startGame()">
+<img src="Apollo_11_Lunar_Lander_-_5927_NASA.jpg" width="25%" height="25%">
+<script>
+
+var myGamePiece;
+var mySpeed;
+var togle=false;
+var audioEagleHasLanded = new Audio('62283main_landing_short.wav');
+var audioWeHaveAProblem = new Audio('houston_problem.wav');
+
+function startGame() {
+    myGamePiece = new component(30, 30, "green", 150, 10);
+    myGamePiece.gravity = 0.05;
+    mySpeed = new component("30px", "Consolas", "red", 280, 40, "text");
+    myGameArea.start();
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 480;
+        this.canvas.height = 270;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    this.score = 0;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;
+    this.gravity = 0;
+    //this.gravitySpeed = 0;
+    this.update = function() {
+        ctx = myGameArea.context;
+        if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    this.newPos = function() {
+        this.speedY += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.checkHitBottom();
+	
+    }
+    this.checkHitBottom = function() {
+        var rockbottom = myGameArea.canvas.height - this.height;
+        if (this.y > rockbottom) {
+            this.y = rockbottom;
+			if(this.speedY>1.0){
+				//alert("Kollisjon!");
+				audioWeHaveAProblem.play();
+				togle=false;
+			} else {
+				if(togle==true) {
+					//alert("Huston, the Eagle has landed!");
+					audioEagleHasLanded.play();
+					togle=false;
+				}
+			}
+            this.speedY = 0;
+        }
+    }
+	
+	this.changeColor = function(color) {
+        ctx = myGameArea.context;
+        
+        ctx.fillStyle = color;
+
+    }
+}
+
+function updateGameArea() {
+
+    myGameArea.clear();
+    
+    mySpeed.text="Speed: " + myGamePiece.speedY.toFixed(2);
+    mySpeed.update();
+    myGamePiece.newPos();
+    myGamePiece.update();
+}
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
+}
+
+function accelerate(n) {
+    myGamePiece.gravity = n;
+	togle=true;
+}
+
+function endreFarge() {
+mySpeed.changeColor("blue");
+}
+</script>
+<br>
+<button onmousedown="accelerate(-0.02)" onmouseup="accelerate(0.05)">ACCELERATE</button>
+<p>Trykk på ACCELERATE knappen for å gi gass oppover.</p>
+<p>Får du til en forsiktig landing?</p>
+</body>
+</html>
+
+
+<button onclick="endreFarge()">Trykk her</button>
+
+
+</body>
+</html>
