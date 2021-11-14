@@ -145,9 +145,19 @@ function accelerate(n) {
 function endreFarge() {
 mySpeed.changeColor("blue");
 }
+
+function myFunction1() {
+  myGamePiece.gravity = -0.2;
+}
+
+function myFunction2() {
+  myGamePiece.gravity = 0.05;
+}
+
 </script>
 <br>
 <button onmousedown="accelerate(-0.02)" onmouseup="accelerate(0.05)">ACCELERATE</button>
+<button ontouchstart="myFunction1()" ontouchend="myFunction2()"style="height:200px;width:200px"></button>
 <p>Trykk på ACCELERATE knappen for å gi gass oppover.</p>
 <p>Får du til en forsiktig landing?</p>
 </body>
