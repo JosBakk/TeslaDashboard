@@ -128,8 +128,8 @@ function calcDist(lat1, lon1, lat2, lon2) {
 
   var tot_score=20;
   var distance = 0;
-  var goal_pos_lat = 59.74650;
-  var goal_pos_lon = 10.20640;
+  var goal_pos_lat = 58.900609;
+  var goal_pos_lon = 9.5783418;
   var beep_frq;
   var audio = new Audio("Dovregubben.mp3");
 
