@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>XMLHttpRequest Example</title>
+  </head>
+  <body>
+    <button id="myButton">Fetch Data</button>
+    <p id="myData"></p>
+    <script>
+      var button = document.getElementById("myButton");
+      var dataElement = document.getElementById("myData");
+
+      button.addEventListener("click", function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://josbakk.github.io/TeslaDashboard/Applications/TextToSpeech/test.txt");
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+
+            alert(xhr.responseText);
+            //dataElement.textContent = "Title: " + data.title;
+          }
+        };
+        xhr.send();
+      });
+    </script>
+  </body>
+</html>

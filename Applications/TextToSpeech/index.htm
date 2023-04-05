@@ -3,70 +3,16 @@
   <head>
     <meta charset="UTF-8">
     <title>Read and Speak Text File</title>
+	<link rel="stylesheet" href="./styles.css">
+	<link rel="stylesheet" href="./libs/v6.1.1-dist/ol.css">
   </head>
   <body>
     <h1>Read and Speak Text File</h1>
-    <input type="file" id="file-input">
-    <button id="speak-btn">Speak</button>
-    <script>
-      // Get references to the file input and speak button
-      const fileInput = document.getElementById('file-input');
-      const speakBtn = document.getElementById('speak-btn');
-	  
-	  var xhr = new XMLHttpRequest();
-	  xhr.open('GET', 'https://josbakk.github.io/TeslaDashboard/Applications/TextToSpeech/test.txt', true);
-      xhr.onload = function() {
-      if (this.status == 200) {
-        var reader = new FileReader();
-        reader.readAsText(this.response);
-        reader.onload = function() {
-          var textContent = reader.result;
-          var paragraph = document.createElement('p');
-          paragraph.textContent = textContent;
-          document.body.appendChild(paragraph);
-        };
-      }
-    };
-    xhr.send();
-
-      // Add an event listener to the file input to handle when a file is selected
-      fileInput.addEventListener('change', () => {
-        // Get the selected file
-        const file = fileInput.files[0];
-
-        // Create a new FileReader object to read the file
-        const reader = new FileReader();
-
-        // Define a callback function to handle when the file is loaded
-        reader.onload = () => {
-          // Get the text content of the file
-          const fileText = reader.result;
-
-          // Create a new SpeechSynthesisUtterance object
-          const utterance = new SpeechSynthesisUtterance(fileText);
-
-          // Set the language of the utterance to Norwegian
-          utterance.lang = 'nb-NO';
-
-          // Speak the text using the default speech synthesizer
-          window.speechSynthesis.speak(utterance);
-        };
-
-        // Read the file as text
-        reader.readAsText(file);
-      });
-
-      // Add an event listener to the speak button to handle when the user wants to speak the file content again
-      speakBtn.addEventListener('click', () => {
-        // Create a new SpeechSynthesisUtterance object with the previous text content
-        const utterance = new SpeechSynthesisUtterance(fileText);
-
-        // Set the language of the utterance to Norwegian
-        utterance.lang = 'nb-NO';
-
-        // Speak the text using the default speech synthesizer
-        window.speechSynthesis.speak(utterance);
-      });
-    </script>
+	<input type="text" id="file_id" name="Name">
+	<button id="myButton">Klikk her</button>
+	<div id="js-map" class="map"></div>
+	<script src="./main.js"></script>
+    <script src="./libs/v6.1.1-dist/ol.js"></script>
+	
   </body>
 </html>
