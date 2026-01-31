@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Get Location</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  .icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #f1f5f9;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 40px;
+  }
+
+  #getLocationBtn {
+    width: 100%;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba(99, 102, 241, 0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #getLocationBtn:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
+  }
+
+  #getLocationBtn:disabled {
+    background: #334155;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  /* Result Card */
+  .result-card {
+    margin-top: 36px;
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 24px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+    border: 1px solid #334155;
+  }
+
+  .result-card.show { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #64748b;
+    margin-bottom: 6px;
+  }
+
+  .result-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: #38bdf8;
+    margin-bottom: 18px;
+    word-break: break-all;
+  }
+
+  .result-value:last-of-type { margin-bottom: 0; }
+
+  .divider {
+    height: 1px;
+    background: #334155;
+    margin: 16px 0;
+  }
+
+  .accuracy {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 12px;
+  }
+
+  .accuracy span { color: #a78bfa; font-weight: 600; }
+
+  /* Loading */
+  .loading {
+    margin-top: 36px;
+    display: none;
+    align-items: center;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .loading.show { display: flex; }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #334155;
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text { font-size: 15px; color: #64748b; }
+
+  /* Error */
+  .error-card {
+    margin-top: 36px;
+    background: #3b1f1f;
+    border: 1px solid #7f1d1d;
+    border-radius: 16px;
+    padding: 20px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .error-card.show { display: block; }
+
+  .error-card p {
+    font-size: 15px;
+    color: #fca5a5;
+    line-height: 1.5;
+  }
+
+  .error-card strong { color: #f87171; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="icon">📍</div>
+  <h1>My Location</h1>
+  <p class="subtitle">Tap the button to get your GPS coordinates</p>
+
+  <button id="getLocationBtn" onclick="getLocation()">Get Location</button>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p class="loading-text">Fetching your location...</p>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+    <p class="result-label">Latitude</p>
+    <p class="result-value" id="lat">—</p>
+    <div class="divider"></div>
+    <p class="result-label">Longitude</p>
+    <p class="result-value" id="lng">—</p>
+    <div class="divider"></div>
+    <p class="accuracy">Accuracy: <span id="accuracy">—</span> meters</p>
+  </div>
+
+  <!-- Error -->
+  <div class="error-card" id="errorCard">
+    <p id="errorMsg"><strong>Error:</strong> Something went wrong.</p>
+  </div>
+</div>
+
+<script>
+  const btn = document.getElementById('getLocationBtn');
+  const loading = document.getElementById('loading');
+  const resultCard = document.getElementById('resultCard');
+  const errorCard = document.getElementById('errorCard');
+
+  function hideAll() {
+    loading.classList.remove('show');
+    resultCard.classList.remove('show');
+    errorCard.classList.remove('show');
+  }
+
+  function getLocation() {
+    hideAll();
+    btn.disabled = true;
+    loading.classList.add('show');
+
+    if (!navigator.geolocation) {
+      showError('Geolocation is not supported by your browser.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    });
+  }
+
+  function onSuccess(pos) {
+    hideAll();
+    btn.disabled = false;
+    document.getElementById('lat').textContent = pos.coords.latitude.toFixed(6);
+    document.getElementById('lng').textContent = pos.coords.longitude.toFixed(6);
+    document.getElementById('accuracy').textContent = Math.round(pos.coords.accuracy);
+    resultCard.classList.add('show');
+  }
+
+  function onError(err) {
+    btn.disabled = false;
+    var msgs = {
+      1: 'Permission denied. Please allow location access in your browser settings.',
+      2: 'Location information is unavailable. Check your GPS or network.',
+      3: 'The request timed out. Try again in an open area.'
+    };
+    showError(msgs[err.code] || 'An unknown error occurred.');
+  }
+
+  function showError(msg) {
+    hideAll();
+    btn.disabled = false;
+    document.getElementById('errorMsg').innerHTML = '<strong>Error:</strong> ' + msg;
+    errorCard.classList.add('show');
+  }
+</script>
+
+</body>
+</html>
