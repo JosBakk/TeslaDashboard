@@ -183,8 +183,8 @@ const W = canvas.width, H = canvas.height;
 const cx = W/2, cy = H/2, R = 110;
 
 let running = false, watchId = null;
-let lastPos = null, totalDist = 0, maxSpeed = 0, curSpeed = 0;
-let startTime = null, elapsed = 0, timerInterval = null;
+let lastPos = null, totalDist = 0, maxSpeed = 0, curSpeed = 0, targetSpeed = 0;
+let startTime = null, elapsed = 0, timerInterval = null, smoothInterval = null;
 
 const MAX_SPEED = 12; // m/s (~43 km/h, generous max for gauge)
 const START_ANGLE = 0.75 * Math.PI; // 135deg
@@ -291,9 +291,9 @@ function onPos(pos) {
       // Filter out noise: if distance is unreasonably large for dt
       let spd = d / dt;
       if (spd < 30) { // max ~108 km/h sanity check
-        curSpeed = spd;
+        targetSpeed = spd;
         totalDist += d;
-        if (curSpeed > maxSpeed) maxSpeed = curSpeed;
+        if (targetSpeed > maxSpeed) maxSpeed = targetSpeed;
       }
     }
   }
@@ -321,6 +321,15 @@ function startTracking() {
     document.getElementById('timeVal').textContent = fmtTime(elapsed);
   }, 500);
 
+  // Smooth interpolation loop at 100ms
+  smoothInterval = setInterval(() => {
+    let diff = targetSpeed - curSpeed;
+    let ease = Math.abs(diff) < 0.05 ? diff : diff * 0.18;
+    curSpeed += ease;
+    if (Math.abs(curSpeed) < 0.01) curSpeed = 0;
+    updateUI();
+  }, 100);
+
   watchId = navigator.geolocation.watchPosition(onPos, onErr, {
     enableHighAccuracy: true, maximumAge: 0, timeout: 10000
   });
@@ -330,7 +339,8 @@ function stopTracking() {
   running = false;
   if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
   clearInterval(timerInterval); timerInterval = null;
-  curSpeed = 0;
+  clearInterval(smoothInterval); smoothInterval = null;
+  curSpeed = 0; targetSpeed = 0;
   document.getElementById('btnStart').textContent = 'Start';
   document.getElementById('statusDot').classList.remove('active');
   document.getElementById('msg').textContent = 'Stopped.';
