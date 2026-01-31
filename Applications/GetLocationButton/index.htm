@@ -119,6 +119,18 @@
     margin: 16px 0;
   }
 
+  .location-name {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid #334155;
+  }
+
+  .location-name .result-value {
+    font-size: 17px;
+    color: #a78bfa;
+    line-height: 1.4;
+  }
+
   .accuracy {
     font-size: 13px;
     color: #64748b;
@@ -196,6 +208,10 @@
     <p class="result-label">Longitude</p>
     <p class="result-value" id="lng">—</p>
     <div class="divider"></div>
+    <div class="location-name">
+      <p class="result-label">Location Name</p>
+      <p class="result-value" id="locationName">—</p>
+    </div>
     <p class="accuracy">Accuracy: <span id="accuracy">—</span> meters</p>
   </div>
 
@@ -235,12 +251,35 @@
   }
 
   function onSuccess(pos) {
+    var lat = pos.coords.latitude;
+    var lng = pos.coords.longitude;
+    document.getElementById('lat').textContent = lat.toFixed(6);
+    document.getElementById('lng').textContent = lng.toFixed(6);
+    document.getElementById('accuracy').textContent = Math.round(pos.coords.accuracy);
+    document.getElementById('locationName').textContent = 'Resolving...';
     hideAll();
     btn.disabled = false;
-    document.getElementById('lat').textContent = pos.coords.latitude.toFixed(6);
-    document.getElementById('lng').textContent = pos.coords.longitude.toFixed(6);
-    document.getElementById('accuracy').textContent = Math.round(pos.coords.accuracy);
     resultCard.classList.add('show');
+    reverseGeocode(lat, lng);
+  }
+
+  async function reverseGeocode(lat, lng) {
+    try {
+      var url = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng;
+      var res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      var data = await res.json();
+      var addr = data.address || {};
+      var parts = [
+        addr.neighbourhood || addr.suburb || addr.quarter,
+        addr.city || addr.town || addr.village || addr.municipality,
+        addr.county || addr.district,
+        addr.state || addr.province,
+        addr.country
+      ].filter(Boolean);
+      document.getElementById('locationName').textContent = parts.length ? parts.join(', ') : (data.display_name || 'Unknown location');
+    } catch (e) {
+      document.getElementById('locationName').textContent = 'Could not resolve name';
+    }
   }
 
   function onError(err) {
